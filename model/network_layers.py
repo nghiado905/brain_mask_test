@@ -40,10 +40,10 @@ def bneck_resid3d(x, params):
 
     # fuse shortcut with tensor output, transforming filter number as needed
     if x.shape[-1] == shortcut.shape[-1]:
-        x = tf.add(x, shortcut)
+        x = tf.keras.layers.Add()([x, shortcut])
     else:
         shortcut = Conv3D(filt, kernel_size=[1, 1, 1], padding='same', data_format=dfmt, dtype=policy)(shortcut)
-        x = tf.add(x, shortcut)
+        x = tf.keras.layers.Add()([x, shortcut])
 
     return x
 
@@ -62,7 +62,7 @@ def vnet_conv3d_block(layer_input, num_conv, params):
     for i in range(num_conv):
         x = Conv3D(filt, kernel_size=ksize, padding='same', data_format=dfmt, dtype=policy)(x)
         if i == num_conv - 1:
-            x = tf.add(x, layer_input)
+            x = tf.keras.layers.Add()([x, layer_input])
         x = Activations(params)(x)
         # x = BatchNormalization(axis=-1 if dfmt == 'channels_last' else 1)(x)
         x = Dropout(rate=dropout)(x)
@@ -80,12 +80,12 @@ def vnet_conv3d_block_2(layer_input, fine_feat, num_conv, params):
     policy = params.policy
 
     # concat
-    x = tf.concat([layer_input, fine_feat], axis=-1)
+    x = tf.keras.layers.Concatenate(axis=-1)([layer_input, fine_feat])
 
     # check for 1 conv
     if num_conv == 1:
         x = Conv3D(filt * 2, kernel_size=ksize, padding='same', data_format=dfmt, dtype=policy)(x)
-        x = tf.add(x, x)
+        x = tf.keras.layers.Add()([x, x])
         x = Activations(params)(x)
         # x = BatchNormalization(axis=-1 if dfmt == 'channels_last' else 1)(x)
         x = Dropout(rate=dropout)(x)
@@ -101,7 +101,7 @@ def vnet_conv3d_block_2(layer_input, fine_feat, num_conv, params):
     for i in range(num_conv):
         x = Conv3D(filt, kernel_size=ksize, padding='same', data_format=dfmt, dtype=policy)(x)
         if i == num_conv - 1:
-            x = tf.add(x, layer_input)
+            x = tf.keras.layers.Add()([x, layer_input])
         x = Activations(params)(x)
         # x = BatchNormalization(axis=-1 if dfmt == 'channels_last' else 1)(x)
         x = Dropout(rate=dropout)(x)
