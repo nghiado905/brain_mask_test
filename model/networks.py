@@ -67,7 +67,7 @@ class Unet3dBneck:
                 x = bneck_resid3d(x, self.params)
 
             # create skip connection
-            skips.append(tf.identity(x))
+            skips.append(x)
 
             # downsample block
             self.params.base_filters = self.params.base_filters * 2  # double filters before downsampling
@@ -93,7 +93,7 @@ class Unet3dBneck:
                                 dtype=policy)(x)
 
             # fuse skip connections with concatenation of features
-            x = tf.concat([x, skips[n]], axis=-1 if dfmt == 'channels_last' else 1)
+            x = tf.keras.layers.Concatenate(axis=-1 if dfmt == 'channels_last' else 1)([x, skips[n]])
 
             # horizontal blocks
             for layer in range(n_layers):
