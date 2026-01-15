@@ -3,7 +3,7 @@ Allows user to choose a specific network using a string in parameter file
 """
 
 import tensorflow as tf
-from tensorflow.keras.layers import Conv3D, Conv3DTranspose, Input
+from tensorflow.keras.layers import Conv3D, Conv3DTranspose, Input, Activation, Softmax
 from tensorflow.keras.models import Model
 from model.network_layers import bneck_resid3d, vnet_conv3d_block, vnet_conv3d_block_2, vnet_up_conv3d, vnet_down_conv3d
 
@@ -104,12 +104,12 @@ class Unet3dBneck:
             x = Conv3D(filters=output_filt, kernel_size=[1, 1, 1], padding='same', data_format=dfmt, dtype='float32')(x)
         elif self.params.final_layer == "sigmoid":
             x = Conv3D(filters=output_filt, kernel_size=[1, 1, 1], padding='same', data_format=dfmt, dtype='float32')(x)
-            x = tf.nn.sigmoid(x)
+            x = Activation('sigmoid')(x)
         elif self.params.final_layer == "softmax":
             x = Conv3D(filters=output_filt, kernel_size=[1, 1, 1], padding='same', data_format=dfmt, dtype='float32')(x)
-            x = tf.nn.softmax(x, axis=-1 if dfmt == 'channels_last' else 1)
+            x = Softmax(axis=-1 if dfmt == 'channels_last' else 1)(x)
         else:
-            assert ValueError("Specified final layer is not implemented: {}".format(self.params.final_layer))
+            raise ValueError("Specified final layer is not implemented: {}".format(self.params.final_layer))
 
         return Model(inputs=inputs, outputs=x)
 
