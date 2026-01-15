@@ -16,8 +16,8 @@ input_function: PatchInputFn3D
 data_plane: ax
 train_dims: [80, 80, 80]
 train_patch_overlap: [4, 4, 4]
-infer_dims: [48, 48, 48]
-infer_patch_overlap: [8, 8, 8]
+infer_dims: [32, 32, 32]
+infer_patch_overlap: [1, 1, 1]
 augment_train_data: True
 label_interp: 0
 
