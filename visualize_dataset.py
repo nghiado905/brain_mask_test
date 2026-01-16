@@ -139,7 +139,7 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('-m', '--mode', default="train", choices=["train", "val", "eval", "infer"],
                         help="Data mode to visualize")
-    parser.add_argument('-i', '--infer_dirs', default=None, type=list, nargs='+',
+    parser.add_argument('-i', '--infer_dirs', default=None, type=str, nargs='+',
                         help="List of directories for inference mode")
     parser.add_argument('-g', '--png', default=False, action="store_true",
                         help="Output a png montage")
