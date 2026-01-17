@@ -79,9 +79,11 @@ def batch_mask(infer_direcs, param_file, out_dir, suffix, checkpoint='last', ove
                 skip = 1
         if skip:
             continue
-        # determine mask output path
+        # determine mask output path (write to out_dir[n] if provided, else input dir)
         idno = os.path.basename(direc.rsplit('/', 1)[0] if direc.endswith('/') else direc)
-        nii_out_path = os.path.join(direc, idno + "_" + suffix + ".nii.gz")
+        target_dir = out_dir[n] if out_dir else direc
+        os.makedirs(target_dir, exist_ok=True)
+        nii_out_path = os.path.join(target_dir, idno + "_" + suffix + ".nii.gz")
         # if overwrite not set, make sure output doesn't exist before proceeding
         if not overwrite:
             if os.path.isfile(nii_out_path):
