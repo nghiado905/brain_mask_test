@@ -14,6 +14,9 @@ from utilities.utils import load_param_file, set_logger
 from predict import predict, pred_model
 import time
 
+def _find_nifti_with_suffix(direc, suf):
+    """Return list of nifti paths matching suffix with .nii.gz or .nii"""
+    return glob(os.path.join(direc, f"*{suf}.nii.gz")) or glob(os.path.join(direc, f"*{suf}.nii"))
 
 # define function to make a batch of brain masks from a list of directories
 def batch_mask(infer_direcs, param_file, out_dir, suffix, checkpoint='last', overwrite=False, thresh=0.5, clean=False,
@@ -71,7 +74,7 @@ def batch_mask(infer_direcs, param_file, out_dir, suffix, checkpoint='last', ove
         # make sure all required files exist in data directory, if not, skip
         skip = 0
         for suf in params.data_prefix:
-            if not glob(direc + "/*{}.nii.gz".format(suf)):
+            if not _find_nifti_with_suffix(direc, suf):
                 bm_logger.info("Directory {} is missing required file: {} and will be skipped...".format(direc, suf))
                 skip = 1
         if skip:
